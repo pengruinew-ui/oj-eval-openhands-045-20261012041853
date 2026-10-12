@@ -3,7 +3,7 @@
 
 using namespace std;
 
-const int MAX_N = 500000;
+const int MAX_N = 500005;
 
 class ElevatorSystem {
 private:
@@ -90,7 +90,7 @@ public:
     ElevatorSystem() : current_floor(0), direction(1), request_count(0) {}
     
     void add_request(int floor) {
-        if (request_count < MAX_N) {
+        if (request_count < MAX_N && request_count >= 0) {
             insert_sorted(floor);
         }
     }
