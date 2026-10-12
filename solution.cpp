@@ -112,13 +112,14 @@ public:
                 current_floor = target;
                 remove_request(target);
             } else {
-                // reverse direction
+                // reverse direction and find nearest in new direction
                 direction = -1;
                 target = find_nearest_down();
                 if (target != -1) {
                     current_floor = target;
                     remove_request(target);
                 }
+                // If still no target, direction stays reversed
             }
         } else {  // going down
             target = find_nearest_down();
@@ -126,13 +127,14 @@ public:
                 current_floor = target;
                 remove_request(target);
             } else {
-                // reverse direction
+                // reverse direction and find nearest in new direction
                 direction = 1;
                 target = find_nearest_up();
                 if (target != -1) {
                     current_floor = target;
                     remove_request(target);
                 }
+                // If still no target, direction stays reversed
             }
         }
     }
