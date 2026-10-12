@@ -12,86 +12,59 @@ private:
     int current_floor;
     int direction;  // 1 for up, -1 for down
     
-    // Insertion sort to keep array sorted
-    void insert_sorted(int floor) {
-        int i = request_count - 1;
-        while (i >= 0 && requests[i] > floor) {
-            requests[i + 1] = requests[i];
-            i--;
-        }
-        requests[i + 1] = floor;
-        request_count++;
-    }
-    
-    // Binary search to find floor
-    int find_floor(int floor) {
-        int left = 0, right = request_count - 1;
-        while (left <= right) {
-            int mid = (left + right) / 2;
-            if (requests[mid] == floor) {
-                return mid;
-            } else if (requests[mid] < floor) {
-                left = mid + 1;
-            } else {
-                right = mid - 1;
-            }
-        }
-        return -1;
-    }
-    
     void remove_request(int floor) {
-        int idx = find_floor(floor);
-        if (idx != -1) {
-            // Shift remaining elements
-            for (int j = idx; j < request_count - 1; j++) {
-                requests[j] = requests[j + 1];
+        for (int i = 0; i < request_count; i++) {
+            if (requests[i] == floor) {
+                // Shift remaining elements
+                for (int j = i; j < request_count - 1; j++) {
+                    requests[j] = requests[j + 1];
+                }
+                request_count--;
+                break;
             }
-            request_count--;
         }
     }
     
     int find_nearest_up() {
-        // Binary search for first element >= current_floor
-        int left = 0, right = request_count - 1;
-        int result = -1;
+        int best = -1;
+        int best_dist = 2000000000;  // Larger than max possible floor difference
         
-        while (left <= right) {
-            int mid = (left + right) / 2;
-            if (requests[mid] >= current_floor) {
-                result = requests[mid];
-                right = mid - 1;
-            } else {
-                left = mid + 1;
+        for (int i = 0; i < request_count; i++) {
+            int floor = requests[i];
+            if (floor >= current_floor) {
+                int dist = floor - current_floor;
+                if (dist < best_dist) {
+                    best_dist = dist;
+                    best = floor;
+                }
             }
         }
-        
-        return result;
+        return best;
     }
     
     int find_nearest_down() {
-        // Binary search for last element <= current_floor
-        int left = 0, right = request_count - 1;
-        int result = -1;
+        int best = -1;
+        int best_dist = 2000000000;  // Larger than max possible floor difference
         
-        while (left <= right) {
-            int mid = (left + right) / 2;
-            if (requests[mid] <= current_floor) {
-                result = requests[mid];
-                left = mid + 1;
-            } else {
-                right = mid - 1;
+        for (int i = 0; i < request_count; i++) {
+            int floor = requests[i];
+            if (floor <= current_floor) {
+                int dist = current_floor - floor;
+                if (dist < best_dist) {
+                    best_dist = dist;
+                    best = floor;
+                }
             }
         }
-        
-        return result;
+        return best;
     }
     
 public:
     ElevatorSystem() : current_floor(0), direction(1), request_count(0) {}
     
     void add_request(int floor) {
-        if (request_count < MAX_N && request_count >= 0) {
-            insert_sorted(floor);
+        if (request_count < MAX_N) {
+            requests[request_count++] = floor;
         }
     }
     
@@ -119,7 +92,6 @@ public:
                     current_floor = target;
                     remove_request(target);
                 }
-                // If still no target, direction stays reversed
             }
         } else {  // going down
             target = find_nearest_down();
@@ -134,7 +106,6 @@ public:
                     current_floor = target;
                     remove_request(target);
                 }
-                // If still no target, direction stays reversed
             }
         }
     }
